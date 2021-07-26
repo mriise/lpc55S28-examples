@@ -92,6 +92,6 @@ mod app {
                 (*led).set_low().ok();
             }
         });
-        toggle::spawn_after(Milliseconds(300u32)).ok();
+        toggle::spawn_after(Milliseconds(300u32)).unwrap();
     }
 }
