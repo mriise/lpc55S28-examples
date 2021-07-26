@@ -14,21 +14,23 @@
 
 use panic_halt as _;
 
-#[rtic::app(device = stm32f2xx_hal::stm32, dispatchers = [EXTI0], peripherals = true)]
+#[rtic::app(device = lpc55_hal::raw, dispatchers = [SDIO], peripherals = true)]
 mod app {
-    use rtt_target::{rprintln, rtt_init_print};
+    use cortex_m_semihosting::hprintln;
     use dwt_systick_monotonic::DwtSystick;
+    use lpc55_hal::{drivers::pins, drivers::pins::Level, prelude::*, typestates::pin};
     use rtic::rtic_monotonic::Milliseconds;
-    use stm32f2xx_hal::{gpio::{GpioExt, Output, PushPull, gpioa::PA5}, prelude::_embedded_hal_digital_v2_OutputPin};
 
-    const MONO_HZ: u32 = 8_000_000; // 8 MHz
+    type RedLed = lpc55_hal::Pin<pins::Pio1_6, pin::state::Gpio<pin::gpio::direction::Output>>;
+
+    const MONO_HZ: u32 = 150_000_000; // 8 MHz
 
     #[monotonic(binds = SysTick, default = true)]
     type MyMono = DwtSystick<MONO_HZ>;
 
     #[shared]
     struct Shared {
-        led: PA5<Output<PushPull>>,
+        led: RedLed,
         toggle: bool,
     }
 
@@ -37,37 +39,35 @@ mod app {
 
     #[init]
     fn init(cx: init::Context) -> (Shared, Local, init::Monotonics) {
-        rtt_init_print!();
-        rprintln!("init start");
+        hprintln!("init start").unwrap();
 
         let mut dcb = cx.core.DCB;
-        let dwt = cx.core.DWT;
-        let systick = cx.core.SYST;
-
-        let mono = DwtSystick::new(&mut dcb, dwt, systick, 8_000_000); // maybe MONO_HZ?
 
         let device = cx.device;
 
+        let mut syscon = lpc55_hal::Syscon::from(device.SYSCON);
+        let mut gpio = lpc55_hal::Gpio::from(device.GPIO).enabled(&mut syscon);
+        let mut iocon = lpc55_hal::Iocon::from(device.IOCON).enabled(&mut syscon);
+
+        let mono = DwtSystick::new(&mut dcb, cx.core.DWT, cx.core.SYST, MONO_HZ); // maybe MONO_HZ?
+
         // let mut flash = device.FLASH.constrain();
+        let pins = lpc55_hal::Pins::take().unwrap();
 
-        // power on GPIOA
-        device.RCC.ahb1enr.modify(|_, w| w.gpioaen().set_bit());
-        // configure pin PA5 as output
-        device.GPIOA.moder.modify(|_, w| w.moder5().bits(1));
+        let red_led = pins
+            .pio1_6
+            .into_gpio_pin(&mut iocon, &mut gpio)
+            .into_output(Level::High);
 
-        let gpioa = device.GPIOA.split();
-        let mut led: PA5<Output<PushPull>> = gpioa.pa5.into_push_pull_output();
+        hprintln!("init end").unwrap();
 
-        led.set_high().unwrap();
-
-        rprintln!("init end");
 
         // Schedule `toggle` to run 8e6 cycles (clock cycles) in the future
         toggle::spawn_after(Milliseconds(300u32)).ok();
 
         (
             Shared {
-                led: led,
+                led: red_led,
                 toggle: false,
             },
             Local {},
@@ -81,8 +81,13 @@ mod app {
         let led = cx.shared.led;
 
         (toggle, led).lock(|toggle, led| {
-            rprintln!("toggle: {}  @ !", toggle);
-            
+            hprintln!(
+                "toggle: {} @ {} !",
+                toggle,
+                rtic::export::DWT::get_cycle_count()
+            )
+            .unwrap();
+
             if *toggle {
                 (*led).set_high().ok();
             } else {
