@@ -51,8 +51,7 @@ dependencies = [
  "cortex-m-semihosting",
  "dwt-systick-monotonic",
  "lpc55-hal",
- "panic-halt",
- "rtt-target",
+ "panic-semihosting",
 ]
 
 [[package]]
@@ -72,9 +71,9 @@ checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
 
 [[package]]
 name = "cipher"
-version = "0.2.5"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12f8e7987cbd042a63249497f41aed09f8e65add917ea6566effbc56578d6801"
+checksum = "7ee52072ec15386f770805afd189a01c8841be8696bed250fa2f13c4c0d6dfb7"
 dependencies = [
  "generic-array 0.14.4",
 ]
@@ -255,21 +254,21 @@ dependencies = [
 
 [[package]]
 name = "lpc55-hal"
-version = "0.1.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "28016083ca06779b375736a602759df677e148425dbb0475799a395001b43553"
+checksum = "0a950e42b2406d999ec325764196344fc3d9fca48c19aee71be1e43980b45182"
 dependencies = [
  "block-buffer",
  "cipher",
  "cortex-m",
  "digest",
  "embedded-hal",
+ "embedded-time",
  "generic-array 0.14.4",
  "lpc55-pac",
  "lpc55-rtic",
  "nb 1.0.0",
- "rand_core 0.5.1",
- "rand_core 0.6.3",
+ "rand_core",
  "usb-device",
  "vcell",
  "void",
@@ -277,9 +276,9 @@ dependencies = [
 
 [[package]]
 name = "lpc55-pac"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eee47591d506a22d56bc591abb955176b1ad3c22122c2395a69e426ea76e25ab"
+checksum = "c3cf523cdf2d6d5506c52af76f300df2e02e5a20f27b321f3a447df50a2224bd"
 dependencies = [
  "cortex-m",
  "cortex-m-rt",
@@ -391,10 +390,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "panic-halt"
-version = "0.2.0"
+name = "panic-semihosting"
+version = "0.5.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "de96540e0ebde571dc55c73d60ef407c653844e6f9a1e2fdbd40c07b9252d812"
+checksum = "c3d55dedd501dfd02514646e0af4d7016ce36bc12ae177ef52056989966a1eec"
+dependencies = [
+ "cortex-m",
+ "cortex-m-semihosting",
+]
 
 [[package]]
 name = "proc-macro-error"
@@ -446,12 +449,6 @@ checksum = "e2a38df5b15c8d5c7e8654189744d8e396bddc18ad48041a500ce52d6948941f"
 
 [[package]]
 name = "rand_core"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90bde5296fc891b0cef12a6d03ddccc162ce7b2aff54160af9338f8d40df6d19"
-
-[[package]]
-name = "rand_core"
 version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d34f1408f55294453790c48b2f1ebbb1c5b4b7563eb1f418bcfcfdbb06ebb4e7"
@@ -492,16 +489,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "rtt-target"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "065d6058bb1204f51a562a67209e1817cf714759d5cf845aa45c75fa7b0b9d9b"
-dependencies = [
- "cortex-m",
- "ufmt-write",
 ]
 
 [[package]]
@@ -550,12 +537,6 @@ name = "typenum"
 version = "1.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "879f6906492a7cd215bfa4cf595b600146ccfac0c79bcbd1f3000162af5e8b06"
-
-[[package]]
-name = "ufmt-write"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e87a2ed6b42ec5e28cc3b94c09982969e9227600b2e3dcbc1db927a84c06bd69"
 
 [[package]]
 name = "unicode-xid"

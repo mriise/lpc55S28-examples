@@ -1,10 +1,6 @@
 # source .gdb-dashboard
 
-set history save on
 set confirm off
-
-# find commit-hash using `rustc -Vv`
-set substitute-path /rustc/53cb7b09b00cbea8754ffb78e7e3cb521cb8af4b /home/mriise/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust
 
 target extended-remote :2331
 load

@@ -6,14 +6,13 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cortex-m = { version = "0.7.3", features = ["linker-plugin-lto"] }
+cortex-m = { version = "0.7.3" }
 cortex-m-rt = "0.6.14"
 cortex-m-rtic = "0.6.0-alpha.5"
-rtt-target = { version = "0.3.1", features = ["cortex-m"] }
-cortex-m-semihosting = "*"
-panic-halt = "0.2.0"
+cortex-m-semihosting = "0.3.7"
+panic-semihosting = "0.5.6"
 dwt-systick-monotonic = "0.1.0-alpha.3"
-lpc55-hal = {version = "0.1.0", features = ["rtic-peripherals"]}
+lpc55-hal = {version = "0.3.0", features = ["rtic-peripherals"]}
 
 [profile.dev]
 opt-level = 1
