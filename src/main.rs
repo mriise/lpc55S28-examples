@@ -37,7 +37,7 @@ fn main() -> ! {
 
 
     // === DEVICE SETUP DONE === //
-
+    // INTERRUPTS TESTED: ADC0, PIN_INT_0, FLEXCOMM0, SDIO,
 
     // // does not work when setting this
     // cortex_m::register::basepri_max::write(32);
